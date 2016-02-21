@@ -1,0 +1,42 @@
+{
+  "name": "knex-flyway",
+  "version": "0.1.0",
+  "description": "Generates migrations for Knex automatically by inspecting the database",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jgr3go/knex-flyway.git"
+  },
+  "keywords": [
+    "knex",
+    "flyway",
+    "migrations",
+    "auto",
+    "automatic",
+    "generate"
+  ],
+  "author": "Jon Gregorowicz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jgr3go/knex-flyway/issues"
+  },
+  "homepage": "https://github.com/jgr3go/knex-flyway#readme",
+  "peerDependencies": {
+    "knex": "0.x"
+  },
+  "devDependencies": {
+    "knex": "0.x",
+    "mysql": "^2.10.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.3.1",
+    "chalk": "^1.1.1",
+    "commander": "^2.9.0",
+    "liftoff": "^2.2.0",
+    "lodash": "^4.5.0",
+    "yargs": "^4.1.0"
+  }
+}
