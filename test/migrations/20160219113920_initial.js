@@ -52,6 +52,7 @@ function primary_table(table) {
         .nullable();
     table.integer('c_comment')
         .comment("!!!");
+    table.integer('c_column_to_drop');
 }
 
 function foreign_table(table) {

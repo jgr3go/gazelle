@@ -43,6 +43,17 @@ function start (env) {
         })
         .catch(exit);
     });
+
+  commander
+    .command('clone')
+    .description('    Creates migrations that would clone your current database from scratch.')
+    .action(() => {
+      actionRunning = lib.clone(env)
+        .then(() => {
+          return success(chalk.green("Done"));
+        })
+        .catch(exit);
+    });
     
   commander.parse(process.argv);
 

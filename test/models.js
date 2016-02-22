@@ -7,6 +7,9 @@ module.exports = {
         type: 'increments',
         primary: true
       },
+      c_integer: {
+        type: 'integer'
+      },
       c_bigInteger: {
         type: 'bigInteger'
       },
@@ -79,6 +82,9 @@ module.exports = {
       c_comment: {
         type: 'integer',
         comment: '!!!'
+      },
+      c_column_to_add: {
+        type: "integer"
       }
     }
   },

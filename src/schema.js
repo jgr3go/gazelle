@@ -68,6 +68,14 @@ class Schema {
         return columns.map(column => {
           return new Column(column);
         });
+      })
+      .then(columns => {
+        // convert to object
+        let obj = {};
+        _.each(columns, column => {
+          obj[column.name] = column;
+        });
+        return obj;
       });
   }
 

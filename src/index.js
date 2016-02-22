@@ -1,14 +1,15 @@
 'use strict';
 
-let config = require('../test/dbconfig');
-let knex = require('knex')(config);
+let knex = require('./database');
 let schema = require('./schema')(knex);
 let bluebird = require('bluebird');
 let comparer = require('./comparer');
+let generator = require('./generator');
 
 module.exports = {
   create,
-  detect
+  detect,
+  clone
 };
 
 function detect (env) {
@@ -24,6 +25,22 @@ function create (env) {
     })
     .then(schema => {
       return compare(schema, models);
+    })
+    .then(comparison => {
+      return generate(comparison);
+    });
+}
+
+function clone (env) {
+  let models;
+  return detect(env)
+    .then(schema => {
+      return {
+        createTables: schema
+      };
+    })
+    .then(comparison => {
+      return generate(comparison);
     });
 }
 
@@ -39,6 +56,9 @@ function getConfig (env) {
 
 function compare (schema, defs) {
   let results = comparer.compare(schema, defs);
-  console.log(results);
   return results;
+}
+
+function generate (comparison) {
+  return generator.generate(comparison);
 }

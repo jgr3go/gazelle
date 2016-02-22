@@ -8,48 +8,70 @@ module.exports = {
 
 function compare (schema, defs) {
     let result = {};
-    result.create = needsCreate(schema, defs);
-    result.drop = needsDrop(schema, defs);
-    result.alter = {};
+
+    let tableDiff = diff(schema, defs);
+    result.dropTables = tableDiff.leftOnly;
+    result.createTables = tableDiff.rightOnly;
+
+    result.alterTables = {};
+    // loop through tables that exist but are different
+    _.each(tableDiff.sharedKeys, (v, tableName) => {
+        // columns need to be added or removed
+        let schemaTable = schema[tableName], defsTable = defs[tableName];
+        let at;
+        if (!equalKeys(schemaTable.columns, defsTable.columns)) {
+            result.alterTables[tableName] = {};
+            at = result.alterTables[tableName];
+            let columnDiff = diff(schemaTable.columns, defsTable.columns);
+            at.removeColumns = columnDiff.leftOnly;
+            at.addColumns = columnDiff.rightOnly;
+        }
+    });
 
     return result;
 }
 
-function needsCreate(schema, defs) {
-    let create = {};
-    _.each(defs, (tableDef, tableName) => {
-        if (!schema[tableName]) {
-            create[tableName] = tableDef;
+function diff (left, right) {
+    let results = {
+        leftOnly: {},
+        sharedKeys: {},
+        rightOnly: {}
+    };
+
+    _.each(left, (prop, key) => {
+        if (right.hasOwnProperty(key)) {
+            results.sharedKeys[key] = true;
+        } else {
+            results.leftOnly[key] = prop;
         }
     });
-    return create;
+    _.each(right, (prop, key) => {
+        if (!left.hasOwnProperty(key)) {
+            results.rightOnly[key] = prop;
+        }
+    });
+
+    return results;
 }
 
-function needsDrop(schema, defs) {
-    let drop = {};
-    _.each(schema, (tableDef, tableName) => {
-        if (!defs[tableName]) {
-            drop[tableName] = true;
-        }
-    });
-    return drop;
-}
+function equalKeys (left, right) {
+    if (_.isNil(left) && _.isNil(right)) {
+        return true;
+    }
+    if (_.isNil(left) || _.isNil(right)) {
+        return false;
+    }
 
-function needsAddColumn(schemaTable, defTable) {
-    let add = {};
-    _.each(defTable.columns, (columnDef, columnName) => {
-        if (!schemaTable[columnName]) {
-            add[columnName] = columnDef;
+    let equal = true;
+    _.each(left, (prop, key) => {
+        if (!right.hasOwnProperty(key)) {
+            equal = false;
         }
     });
-    return add;
-}
-
-function needsRemoveColumn(schemaTable, defTable) {
-    let remove = {};
-    _.each(schemaTable.columns, (columnDef, columnName) => {
-        if (!defTable[columnName]) {
-            remove[columnName] = true;
+    _.each(right, (prop, key) => {
+        if (!left.hasOwnProperty(key)) {
+            equal = false;
         }
     });
+    return equal;
 }

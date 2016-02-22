@@ -37,6 +37,7 @@
     "commander": "^2.9.0",
     "liftoff": "^2.2.0",
     "lodash": "^4.5.0",
+    "nunjucks": "^2.3.0",
     "yargs": "^4.1.0"
   }
 }
