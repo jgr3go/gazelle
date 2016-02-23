@@ -28,7 +28,7 @@ class Database {
             console.log(chalk.red('Warning: unable to read knexfile config'));
             process.exit(1);
         }
-
+        
         let knex = require('knex')(config);
 
         this.environment = environment;
