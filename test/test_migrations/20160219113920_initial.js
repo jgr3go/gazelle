@@ -66,6 +66,14 @@ function foreign_table(table) {
     table.integer('index_1');
     table.integer('index_2');
     table.index(['index_1', 'index_2']);
+
+    table.integer('unique_1');
+    table.integer('unique_2');
+    table.unique(['unique_1', 'unique_2']);
+
+    table.integer('unique_index')
+        .unique()
+        .index();
 }
 
 function schema_table (table) {

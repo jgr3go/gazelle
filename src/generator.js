@@ -3,8 +3,9 @@
 let _ = require('lodash');
 let nunjucks = require('nunjucks');
 let fs = require('fs');
-let knex = require('./database');
+let knex = require('./database').knex;
 let bluebird = require('bluebird');
+let path = require('path');
 
 module.exports = {
     generate: generate
@@ -12,7 +13,8 @@ module.exports = {
 
 
 function generate (comparison) {
-    let nj = nunjucks.configure('src/templates', {
+
+    let nj = nunjucks.configure(path.resolve(__dirname, 'templates'), {
         autoescape: false,
         trimBlocks: true
     });
@@ -57,12 +59,16 @@ function generate (comparison) {
 function generateCreateTable (nj, tableName, tableDef) {
     let args = generateTableMigrationArgs(tableName, tableDef);
     args.columns = objectToList(args.columns);
+    args.indexes = objectToList(args.indexes);
+    args.uniques = objectToList(args.uniques);
     return nj.render('createTable.js', args);
 }
 
 function generateDropTable (nj, tableName, tableDef) {
     let args = generateTableMigrationArgs(tableName, tableDef);
     args.columns = objectToList(args.columns);
+    args.indexes = objectToList(args.indexes);
+    args.uniques = objectToList(args.uniques);
     return nj.render('dropTable.js', args);
 }
 
@@ -70,6 +76,10 @@ function generateAlterTable (nj, tableName, tableDef) {
     let args = generateTableMigrationArgs(tableName, tableDef);
     args.addColumns = objectToList(args.addColumns);
     args.removeColumns = objectToList(args.removeColumns);
+    args.addIndexes = objectToList(args.addIndexes);
+    args.dropIndexes = objectToList(args.dropIndexes);
+    args.addUniques = objectToList(args.addUniques);
+    args.dropUniques = objectToList(args.dropUniques);
     return nj.render('alterTable.js', args);
 }
 
@@ -77,6 +87,8 @@ function generateTableMigrationArgs (tableName, tableDef, type) {
     let args = _.cloneDeep(tableDef);
     args.tableName = tableName;
     args.columnToString = columnToString;
+    args.indexToString = indexToString;
+    args.uniqueToString = uniqueToString;
     return args;
 }
 
@@ -103,7 +115,11 @@ function columnToString (col) {
         cs += `.${col.type}('${col.name}')`;
     }
     if (col.index) {
-        cs += `\n    .index()`;
+        if (_.isString(col.index)) {
+            cs += `\n    .index('${col.index}')`;
+        } else {
+            cs += `\n    .index()`;
+        }
     }
     if (col.primary) {
         cs += `\n    .primary()`;
@@ -141,4 +157,28 @@ function columnToString (col) {
     }
 
     return cs;
+}
+
+function indexToString (index) {
+    let ix = ``;
+    if (_.isObject(index)) {
+        ix += `.index(${JSON.stringify(index.columns)}, '${index.name}')`;
+    } else if (_.isArray(index)) {
+        ix += `.index(${JSON.stringify(index.columns)})`;
+    } else {
+        ix += `.index(${JSON.stringify(index.split(','))})`;
+    }
+    return ix;
+}
+
+function uniqueToString(unique) {
+    let un = ``;
+    if (_.isObject(unique)) {
+        un += `.unique(${JSON.stringify(unique.columns)})`;
+    } else if (_.isArray(unique)) {
+        un += `.unique(${JSON.stringify(unique)})`;
+    } else {
+        un += `.unique(${JSON.stringify(unique.split(','))})`;
+    }
+    return un;
 }

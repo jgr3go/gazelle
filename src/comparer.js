@@ -18,13 +18,22 @@ function compare (schema, defs) {
     _.each(tableDiff.sharedKeys, (v, tableName) => {
         // columns need to be added or removed
         let schemaTable = schema[tableName], defsTable = defs[tableName];
-        let at;
-        if (!equalKeys(schemaTable.columns, defsTable.columns)) {
-            result.alterTables[tableName] = {};
-            at = result.alterTables[tableName];
+        result.alterTables[tableName] = {};
+        let at = result.alterTables[tableName];
+        if (!equalKeys(schemaTable.columns, defsTable.columns)){
             let columnDiff = diff(schemaTable.columns, defsTable.columns);
             at.removeColumns = columnDiff.leftOnly;
             at.addColumns = columnDiff.rightOnly;
+        }
+        if (!equalKeys(schemaTable.indexes, defsTable.indexes)) {
+            let indexDiff = diff(schemaTable.indexes, defsTable.indexes);
+            at.removeIndexes = indexDiff.leftOnly;
+            at.addIndexes = indexDiff.rightOnly;
+        }
+        if (!equalKeys(schemaTable.uniques, defsTable.uniques)) {
+            let uniqueDiff = diff(schemaTable.uniques, defsTable.uniques);
+            at.removeUniques = uniqueDiff.leftOnly;
+            at.addUniques = uniqueDiff.rightOnly;
         }
     });
 

@@ -13,5 +13,13 @@ function {{ tableName }}(table) {
 {% for column in columns %}
   table{{ columnToString(column) }};
 {% endfor %}
+
+{% for index in indexes %}
+  table{{ indexToString(index) }};
+{% endfor %}
+
+{% for unique in uniques %}
+  table{{ uniqueToString(unique) }};
+{% endfor %}
 }
 {% endblock %}

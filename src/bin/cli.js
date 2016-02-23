@@ -4,15 +4,15 @@ let Liftoff = require('liftoff');
 let commander = require('commander');
 let chalk = require('chalk');
 let pkg = require('../../package.json');
-let lib = require('../');
 let yargs = require('yargs').argv;
+let db = require('../database');
 
 
 function exit(text) {
   if (text instanceof Error) {
-    chalk.red(console.error(text.stack));
+    console.error(chalk.red(text.stack));
   } else {
-    chalk.red(console.error(text));
+    console.error(chalk.red(text));
   }
   process.exit(1);
 }
@@ -22,16 +22,35 @@ function success (text) {
   process.exit(0);
 }
 
+function init (env) {
+
+  if (!env.configPath) {
+    exit('No knexfile found. Specify with --knexfile.');
+  }
+
+  if (process.cwd() !== env.cwd) {
+    process.chdir(env.cwd);
+    console.log("Working directory changed to", chalk.magenta(env.cwd));
+  }
+
+  db.initialize(commander, env);
+}
+
 
 function start (env) {
+  init(env);
+  let lib = require('../');
   let actionRunning;
 
   commander
     .version(
-      chalk.blue('flyway CLI version: ', chalk.green(pkg.version))
+      chalk.blue('gazelle CLI version: ', chalk.green(pkg.version))
     )
     .option("--cwd [path]", "Specify the working directory")
-    .option("--models [path]", "Specify the flyway models file (default: flyway.js[on])");
+    .option("--models [path]", "Specify the gazelle models file (default: models.js[on])")
+    .option("--knexfile [path]", "Specify an alternate location for your knexfile.js configuration")
+    .option("--env [env]", "Specify an environment to determine database connection in your knexfile")
+    .option("--test", "Don't output any migrations, but print to the console what would be created");
 
   commander
     .command('create')
@@ -54,6 +73,12 @@ function start (env) {
         })
         .catch(exit);
     });
+
+  commander
+    .command('test')
+    .description('    Test')
+    .action(function test() {
+    });
     
   commander.parse(process.argv);
 
@@ -65,9 +90,8 @@ function start (env) {
 }
 
 let cli = new Liftoff({
-  name: "flyway",
-  processTitle: "flyway",
-  configName: "flyway",
+  name: "gazelle",
+  configName: "knexfile",
   extensions: {
     '.js': null,
     '.json': null
@@ -76,5 +100,6 @@ let cli = new Liftoff({
 
 cli.launch({
   cwd: yargs.cwd,
-  configPath: yargs.models,
+  configPath: yargs.knexfile,
+  completion: yargs.completion,
 }, start);
