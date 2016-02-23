@@ -1,6 +1,6 @@
 'use strict';
 
-let knex = require('./database');
+let knex = require('./database').knex;
 let schema = require('./schema')(knex);
 let bluebird = require('bluebird');
 let comparer = require('./comparer');
@@ -48,7 +48,7 @@ function getConfig (env) {
   return bluebird.resolve()
     .then(() => {
       if (!env.configPath) {
-        throw new Error("No model file found (flyway.js[on] or --config [path])");
+        throw new Error("No model file found (models.js[on] or --config [path])");
       }
       return require(env.configPath);
     });

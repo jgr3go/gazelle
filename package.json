@@ -1,5 +1,5 @@
 {
-  "name": "knex-flyway",
+  "name": "gazelle",
   "version": "0.1.0",
   "description": "Generates migrations for Knex automatically by inspecting the database",
   "main": "index.js",
@@ -8,12 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jgr3go/knex-flyway.git"
+    "url": "git+https://github.com/jgr3go/gazelle.git"
   },
   "keywords": [
     "knex",
-    "flyway",
+    "bookshelf",
+    "gazelle",
+    "migration",
     "migrations",
+    "database",
     "auto",
     "automatic",
     "generate"
@@ -21,9 +24,9 @@
   "author": "Jon Gregorowicz",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jgr3go/knex-flyway/issues"
+    "url": "https://github.com/jgr3go/gazelle/issues"
   },
-  "homepage": "https://github.com/jgr3go/knex-flyway#readme",
+  "homepage": "https://github.com/jgr3go/gazelle#readme",
   "peerDependencies": {
     "knex": "0.x"
   },

@@ -3,8 +3,9 @@
 let _ = require('lodash');
 let nunjucks = require('nunjucks');
 let fs = require('fs');
-let knex = require('./database');
+let knex = require('./database').knex;
 let bluebird = require('bluebird');
+let path = require('path');
 
 module.exports = {
     generate: generate
@@ -12,7 +13,8 @@ module.exports = {
 
 
 function generate (comparison) {
-    let nj = nunjucks.configure('src/templates', {
+
+    let nj = nunjucks.configure(path.resolve(__dirname, 'templates'), {
         autoescape: false,
         trimBlocks: true
     });
