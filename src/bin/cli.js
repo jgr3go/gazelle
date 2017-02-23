@@ -7,7 +7,6 @@ let pkg = require('../../package.json');
 let yargs = require('yargs').argv;
 let db = require('../database');
 
-
 function exit(text) {
   if (text instanceof Error) {
     console.error(chalk.red(text.stack));
@@ -24,13 +23,12 @@ function success (text) {
 
 function init (env) {
 
-  if (!env.configPath) {
-    exit('No knexfile found. Specify with --knexfile.');
-  }
-
   if (process.cwd() !== env.cwd) {
     process.chdir(env.cwd);
     console.log("Working directory changed to", chalk.magenta(env.cwd));
+  }
+  if (!env.configPath) {
+    exit("Could not find config file (default: gazelle.js[on])");
   }
 
   db.initialize(commander, env);
@@ -38,24 +36,23 @@ function init (env) {
 
 
 function start (env) {
-  init(env);
   let lib = require('../');
   let actionRunning;
 
   commander
     .version(
-      chalk.blue('gazelle CLI version: ', chalk.green(pkg.version))
+      chalk.gray('gazelle CLI version: ', chalk.green(pkg.version))
     )
     .option("--cwd [path]", "Specify the working directory")
-    .option("--models [path]", "Specify the gazelle models file (default: models.js[on])")
-    .option("--knexfile [path]", "Specify an alternate location for your knexfile.js configuration")
     .option("--env [env]", "Specify an environment to determine database connection in your knexfile")
+    .option("--cfg [cfg]", "Specify a config file (default: gazelle.js[on])")
     .option("--test", "Don't output any migrations, but print to the console what would be created");
 
   commander
     .command('create')
-    .description('    Detects and creates knex migrations based on database.')
+    .description('    Detects and creates migrations based on database.')
     .action(() => {
+      init(env);
       actionRunning = lib.create(env)
         .then(() => {
           return success(chalk.green("Done"));
@@ -79,6 +76,7 @@ function start (env) {
     .description('    Test')
     .action(function test() {
     });
+
     
   commander.parse(process.argv);
 
@@ -91,7 +89,7 @@ function start (env) {
 
 let cli = new Liftoff({
   name: "gazelle",
-  configName: "knexfile",
+  configName: "gazelle",
   extensions: {
     '.js': null,
     '.json': null
@@ -100,6 +98,6 @@ let cli = new Liftoff({
 
 cli.launch({
   cwd: yargs.cwd,
-  configPath: yargs.knexfile,
+  configPath: yargs.config,
   completion: yargs.completion,
 }, start);

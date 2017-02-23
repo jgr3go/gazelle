@@ -1,7 +1,7 @@
 {
   "name": "gazelle",
   "version": "0.1.1",
-  "description": "Generates migrations for Knex automatically by inspecting the database",
+  "description": "Generates migrations for Sequelize automatically by inspecting the database and comparing to models",
   "main": "src/index.js",
   "bin": "./src/bin/cli.js",
   "scripts": {
@@ -12,8 +12,7 @@
     "url": "git+https://github.com/jgr3go/gazelle.git"
   },
   "keywords": [
-    "knex",
-    "bookshelf",
+    "sequelize",
     "gazelle",
     "migration",
     "migrations",
@@ -28,12 +27,16 @@
     "url": "https://github.com/jgr3go/gazelle/issues"
   },
   "homepage": "https://github.com/jgr3go/gazelle#readme",
-  "peerDependencies": {
-    "knex": "0.x"
+  "optionalDependencies": {
+    "knex": "0.x",
+    "sequelize": "3.x"
   },
   "devDependencies": {
     "knex": "0.x",
-    "mysql": "^2.10.2"
+    "mysql": "^2.10.2",
+    "pg": "^6.1.2",
+    "pg-promise": "^5.5.8",
+    "sequelize": "3.x"
   },
   "dependencies": {
     "bluebird": "^3.3.1",
@@ -41,7 +44,7 @@
     "commander": "^2.9.0",
     "liftoff": "^2.2.0",
     "lodash": "^4.5.0",
-    "nunjucks": "^2.3.0",
-    "yargs": "^4.1.0"
+    "nunjucks": "^3.0.0",
+    "yargs": "^6.6.0"
   }
 }

@@ -1,10 +1,6 @@
 'use strict';
 
-let knex = require('./database').knex;
-let schema = require('./schema')(knex);
-let bluebird = require('bluebird');
-let comparer = require('./comparer');
-let generator = require('./generator');
+let BB = require('bluebird');
 
 module.exports = {
   create,
@@ -13,7 +9,7 @@ module.exports = {
 };
 
 function detect (env) {
-  return schema.getSchema();
+  
 }
 
 function create (env) {
@@ -45,7 +41,7 @@ function clone (env) {
 }
 
 function getConfig (env) {
-  return bluebird.resolve()
+  return BB.resolve()
     .then(() => {
       if (!env.configPath) {
         throw new Error("No model file found (models.js[on] or --config [path])");
