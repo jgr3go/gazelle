@@ -53,29 +53,29 @@ function start (env) {
     .description('    Detects and creates migrations based on database.')
     .action(() => {
       init(env);
-      actionRunning = lib.create(env)
+      actionRunning = lib.create(env, db.get())
         .then(() => {
           return success(chalk.green("Done"));
         })
         .catch(exit);
     });
 
-  commander
-    .command('clone')
-    .description('    Creates migrations that would clone your current database from scratch.')
-    .action(() => {
-      actionRunning = lib.clone(env)
-        .then(() => {
-          return success(chalk.green("Done"));
-        })
-        .catch(exit);
-    });
+  // commander
+  //   .command('clone')
+  //   .description('    Creates migrations that would clone your current database from scratch.')
+  //   .action(() => {
+  //     actionRunning = lib.clone(env)
+  //       .then(() => {
+  //         return success(chalk.green("Done"));
+  //       })
+  //       .catch(exit);
+  //   });
 
-  commander
-    .command('test')
-    .description('    Test')
-    .action(function test() {
-    });
+  // commander
+  //   .command('test')
+  //   .description('    Test')
+  //   .action(function test() {
+  //   });
 
     
   commander.parse(process.argv);

@@ -7,6 +7,7 @@ let DB_SUPPORT = [
   'mysql'
 ];
 
+let DB;
 
 exports.initialize = function (commander, env) {
   let cfg = require(env.configPath);
@@ -18,9 +19,11 @@ exports.initialize = function (commander, env) {
   if (cfg.client === 'pg' || cfg.client === 'postgres' || cfg.client === 'postgresql') {
     Database = require('./pg');
   }
-  let database = new Database(cfg.connection);
+  DB = new Database(cfg.connection);
 
+  DB.connect();
+};
 
-  database.connect();
-
+exports.get = function() {
+  return DB;
 };

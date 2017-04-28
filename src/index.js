@@ -12,19 +12,12 @@ function detect (env) {
   
 }
 
-function create (env) {
-  let models;
-  return getConfig(env)
-    .then(cfg => {
-      models = cfg;
-      return detect(env);
+function create (env, db) {
+  return db.load()
+    .then(res => {
+      console.log(res);
     })
-    .then(schema => {
-      return compare(schema, models);
-    })
-    .then(comparison => {
-      return generate(comparison);
-    });
+    .catch(err => console.error(err));
 }
 
 function clone (env) {
